@@ -1,0 +1,32 @@
+{
+  "sample": "A",
+  "description": "Log4Shell flagship case: HTTP endpoint logs attacker input through log4j2 2.14.1. A benign endpoint logs a constant. A scheduled job logs a configured template.",
+  "expected": [
+    {
+      "id": "CVE-2021-44228",
+      "verdict": "REACHABLE",
+      "inputReachable": true,
+      "why": "GET /api/greet logs the 'name' request parameter; log4j2 resolves ${...} lookups in the message and reaches JndiLookup.lookup.",
+      "mustMentionInPath": ["StrSubstitutor", "JndiLookup"],
+      "entryRoute": "/api/greet"
+    },
+    {
+      "id": "CVE-2022-1471",
+      "verdict": "UNREACHABLE",
+      "why": "snakeyaml is on the shared sample classpath but no A code parses YAML."
+    },
+    {
+      "id": "CVE-2015-6420",
+      "verdict": "UNREACHABLE",
+      "why": "commons-collections is on the shared sample classpath but no A code uses its functors."
+    },
+    {
+      "id": "CVE-2013-7285",
+      "verdict": "UNREACHABLE",
+      "why": "xstream is on the classpath; no A code calls XStream."
+    }
+  ],
+  "mustNotClaim": [
+    { "id": "CVE-2021-44228", "verdict": "UNREACHABLE", "why": "This is Log4Shell actually reachable from an HTTP endpoint; calling it unreachable is the worst possible failure." }
+  ]
+}

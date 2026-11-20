@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "vulnerabilities": [
+    {
+      "id": "CVE-2021-44228",
+      "title": "Log4Shell: JNDI lookup in log message substitution",
+      "severity": "CRITICAL",
+      "groupId": "org.apache.logging.log4j",
+      "artifactId": "log4j-core",
+      "vulnerableRange": "[2.0,2.15.0)",
+      "fixedVersion": "2.17.1",
+      "sinks": [
+        { "class": "org.apache.logging.log4j.core.lookup.JndiLookup", "method": "lookup",
+          "note": "resolves ${jndi:...} from log message text" },
+        { "class": "org.apache.logging.log4j.core.lookup.JndiLookup", "method": "convertJndiName" }
+      ],
+      "description": "Attacker-controlled log messages are passed through StrSubstitutor, which can resolve ${jndi:...} and load remote code.",
+      "reference": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228"
+    },
+    {
+      "id": "CVE-2022-1471",
+      "title": "SnakeYAML Constructor deserialization RCE",
+      "severity": "HIGH",
+      "groupId": "org.yaml",
+      "artifactId": "snakeyaml",
+      "vulnerableRange": "[1.0,2.0)",
+      "fixedVersion": "2.0",
+      "sinks": [
+        { "class": "org.yaml.snakeyaml.constructor.Constructor$ConstructYamlObject", "method": "construct",
+          "note": "instantiates the class named by a !!tag in the document" },
+        { "class": "org.yaml.snakeyaml.constructor.Constructor", "method": "getClassForName" }
+      ],
+      "description": "The default Constructor instantiates classes named in the YAML document, letting a crafted document construct arbitrary objects.",
+      "reference": "https://nvd.nist.gov/vuln/detail/CVE-2022-1471"
+    },
+    {
+      "id": "CVE-2015-6420",
+      "title": "Commons Collections InvokerTransformer deserialization gadget",
+      "severity": "HIGH",
+      "groupId": "commons-collections",
+      "artifactId": "commons-collections",
+      "vulnerableRange": "[3.0,3.2.2)",
+      "fixedVersion": "3.2.2",
+      "sinks": [
+        { "class": "org.apache.commons.collections.functors.InvokerTransformer", "method": "transform",
+          "note": "invokes an arbitrary method on the transformed object" }
+      ],
+      "description": "InvokerTransformer allows arbitrary method invocation and is the core gadget primitive in the commons-collections deserialization chain.",
+      "reference": "https://nvd.nist.gov/vuln/detail/CVE-2015-6420"
+    },
+    {
+      "id": "CVE-2013-7285",
+      "title": "XStream remote code execution via crafted XML",
+      "severity": "CRITICAL",
+      "groupId": "com.thoughtworks.xstream",
+      "artifactId": "xstream",
+      "vulnerableRange": "[1.0.0,1.4.6)",
+      "fixedVersion": "1.4.6",
+      "sinks": [
+        { "class": "com.thoughtworks.xstream.converters.reflection.ReflectionConverter", "method": "unmarshal",
+          "note": "instantiates the class named in the XML" }
+      ],
+      "description": "Unmarshalling XML with XStream instantiates classes named by the document, enabling arbitrary code execution.",
+      "reference": "https://nvd.nist.gov/vuln/detail/CVE-2013-7285"
+    }
+  ]
+}

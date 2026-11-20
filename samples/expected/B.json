@@ -1,0 +1,47 @@
+{
+  "sample": "B",
+  "description": "Hidden call relations: DI, reflection from config, dynamic proxy, serialization callback, plus decoy implementations that must not be conflated.",
+  "expected": [
+    {
+      "id": "CVE-2022-1471",
+      "verdict": "REACHABLE",
+      "inputReachable": true,
+      "why": "GET /pay is handled by StripeGateway (the only PaymentGateway bean), which parses the request parameter as YAML with snakeyaml's default Constructor.",
+      "mustMentionInPath": ["StripeGateway", "Yaml", "Constructor"],
+      "entryRoute": "/pay",
+      "mustNotMentionInPath": ["SimpleReportService"]
+    },
+    {
+      "id": "CVE-2015-6420",
+      "verdict": "REACHABLE",
+      "inputReachable": true,
+      "why": "The gadget primitive is reached from request input through a reflectively loaded plugin (/render -> HtmlPlugin) and, independently, through an interface whose only implementation is /format -> MarkupFormatter. Both are real paths.",
+      "mustMentionInPath": ["InvokerTransformer"],
+      "entryRoute": "/render"
+    },
+    {
+      "id": "CVE-2021-44228",
+      "verdict": "UNREACHABLE",
+      "why": "No application code logs attacker input into log4j in this project."
+    },
+    {
+      "id": "CVE-2013-7285",
+      "verdict": "UNREACHABLE",
+      "why": "xstream is on the classpath but no code path calls XStream.fromXML."
+    }
+  ],
+  "mustNotClaim": [
+    { "id": "CVE-2022-1471", "verdict": "UNREACHABLE", "why": "Reachable through an injected interface whose only bean is StripeGateway." },
+    { "id": "CVE-2015-6420", "verdict": "UNREACHABLE", "why": "Reachable through configuration-driven plugin loading, which a naive scanner misses." }
+  ],
+  "notes": [
+    "CVE-2015-6420 is also reachable via /proxy (dynamic proxy handler) and /session/restore (deserialization callback); any of those entry points is a correct answer, but /render is the strongest.",
+    "MarkupFormatter is reachable only through an interface whose single implementation is constructed in a helper method; this pins the dispatch-narrowing traversal-order fix."
+  ],
+  "mustBeReachable": [
+    { "symbol": "MarkupFormatter", "why": "the only Formatter, constructed in FormatterFactory.create, is reachable from GET /format through the interface call" },
+    { "symbol": "HtmlPlugin", "why": "plugin.properties selects it and GET /render dispatches through the reflectively loaded plugin" },
+    { "symbol": "Migration", "why": "reached from SessionState.readObject, a deserialization callback triggered by GET /session/restore" },
+    { "symbol": "Gadgets", "why": "reached from the dynamic-proxy handler used by GET /proxy" }
+  ]
+}

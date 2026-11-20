@@ -1,0 +1,34 @@
+{
+  "sample": "C",
+  "description": "False-positive control: the vulnerable libraries are all present on the classpath, and there is even dead code that calls a gadget primitive, but no entry point reaches any vulnerable method with attacker input.",
+  "expected": [
+    {
+      "id": "CVE-2015-6420",
+      "verdict": "UNREACHABLE",
+      "why": "The only InvokerTransformer call is in LegacyMigration.legacyTransform, a private method with no caller. Dead code must not be reported reachable."
+    },
+    {
+      "id": "CVE-2013-7285",
+      "verdict": "UNREACHABLE",
+      "why": "xstream is present but never used."
+    },
+    {
+      "id": "CVE-2022-1471",
+      "verdict": "UNREACHABLE",
+      "why": "Yaml.load is reached only from BundleLoader.loadBundled, which parses a bundled resource string, not request input. Structurally reachable at most, never input-reachable."
+    },
+    {
+      "id": "CVE-2021-44228",
+      "verdict": "REACHABLE",
+      "why": "The log4j lookup chain is structurally reachable (LOG.info exists), but the message is a constant, so it must NOT be input-reachable.",
+      "inputReachable": false
+    }
+  ],
+  "mustNotClaim": [
+    { "id": "CVE-2015-6420", "verdict": "REACHABLE", "why": "Only dead code calls the gadget; reporting it reachable is a false positive." },
+    { "id": "CVE-2021-44228", "verdict": "UNREACHABLE", "why": "The lookup machinery genuinely is on the path from /ping's LOG.info, so a structural REACHABLE with inputReachable=false is the honest answer; claiming UNREACHABLE would overstate what was proven." }
+  ],
+  "acceptAlternative": [
+    { "id": "CVE-2021-44228", "verdict": "UNREACHABLE", "reason": "Defensible if the analyzer treats 'debug/trace-only substitution' as unreachable, but not if it claims the sink is not on any path." }
+  ]
+}

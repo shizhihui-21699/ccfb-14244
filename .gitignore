@@ -16,3 +16,9 @@ node_modules/
 __pycache__/
 .venv/
 venv/
+
+# ReachMap build artifacts
+reachmap/build/
+reachmap/tools/stubs/classes/
+samples/*/target/
+reachmap-out/
